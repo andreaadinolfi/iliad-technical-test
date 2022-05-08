@@ -30,6 +30,7 @@ services:
         restart: always
         volumes:
             - dbdata:/var/lib/mysql
+#            - ./docker/my.cnf:/etc/mysql/my.cnf
         environment:
             MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
             MYSQL_DATABASE: ${DB_DATABASE}

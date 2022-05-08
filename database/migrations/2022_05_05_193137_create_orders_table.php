@@ -15,13 +15,13 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('phone', 20)->nullable(true);
-            $table->decimal('shipping_price', 10, 2)->default(0);
-
             $table->foreignId('shipping_status')->nullable(true);
+
             $table->foreign('shipping_status')->on('shipping_statuses')
                 ->references('id')
                 ->onDelete('restrict')->cascadeOnUpdate();
 
+            $table->decimal('shipping_price', 10, 2)->default(0);
             $table->foreignId('shipping_payment_status')->nullable(true);
             $table->foreign('shipping_payment_status')->on('shipping_payment_statuses')
                 ->references('id')
