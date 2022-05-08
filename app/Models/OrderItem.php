@@ -18,8 +18,8 @@ class OrderItem extends Model
         return $this->belongsTo(Item::class,'item_id');
     }
 
-//    public function order(){
-//        return $this->belongsTo(Order::class,'order_id');
-//    }
+    public function order(){
+        return $this->belongsTo(Order::class,'order_id');
+    }
 
 }

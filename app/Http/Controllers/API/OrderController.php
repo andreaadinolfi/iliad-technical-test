@@ -16,7 +16,7 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(){
-        $data = Order::with(['orderItems.order','shippingPaymentStatus','shippingStatus'])->latest()->get();
+        $data = Order::with(['orderItems','shippingPaymentStatus','shippingStatus'])->latest()->get();
         return response()->json([OrderResource::collection($data), 'orders fetched.']);
     }
 

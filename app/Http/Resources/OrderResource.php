@@ -16,32 +16,16 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-//        return parent::toArray($request);
+        return [
+            'orderItems'=>OrderItemResource::collection($this->orderItems),
+            "order_id" => $this->order_id,
+            "phone" => $this->phone,
+            "shipping_status" => $this->shipping_status,
+            "shipping_price" => $this->shipping_price,
+            "shipping_payment_status" => ($this->shippingPaymentStatus) ? $this->shippingPaymentStatus->status : null,
+            "payment_status" => ($this->shippingStatus) ? $this->shippingStatus->status : null
 
-        $arr = parent::toArray($request);
-
-
-        foreach ($arr['order_items'] as &$order_item){
-
-            $has_item_sid = Arr::get($order_item, 'item.has_item_sid');
-            $order_item['cost'] = Arr::get($order_item, 'item.cost');
-            $order_item['price'] = Arr::get($order_item, 'item.cost');
-
-            if($has_item_sid){
-                $order_item['item_sid'] = Arr::get($order_item, 'item.item_sid');
-            }else{
-                $order_item['barcode'] = Arr::get($order_item, 'item.barcode');
-            }
-            unset($order_item['item']);
-
-        }
-
-        $ovride = [
-            'shipping_payment_status' => ($this->shippingPaymentStatus) ? $this->shippingPaymentStatus->status : null,
-            'shipping_status' => ($this->shippingStatus) ? $this->shippingStatus->status : null,
         ];
-
-        return array_merge($arr,$ovride);
 
     }
 }
