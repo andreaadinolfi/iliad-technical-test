@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ShippingStatusSeeder::class);
         $this->call(ShippingPaymentStatusSeeder::class);
+        $this->call(PaymentStatusSeeder::class);
+
 
         Order::factory(20)->has(
             OrderItem::factory(2)->has(

@@ -27,6 +27,11 @@ return new class extends Migration {
                 ->references('id')
                 ->onDelete('restrict')->cascadeOnUpdate();
 
+            $table->foreignId('payment_status')->nullable(true);
+            $table->foreign('payment_status')->on('payment_statuses')
+                ->references('id')
+                ->onDelete('restrict')->cascadeOnUpdate();
+
             $table->timestamps();
             $table->softDeletes();
         });

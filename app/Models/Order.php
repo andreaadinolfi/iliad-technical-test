@@ -33,6 +33,11 @@ class Order extends Model
         return $this->belongsTo(ShippingStatus::class,'shipping_status');
     }
 
+    public function paymentStatus()
+    {
+        return $this->belongsTo(PaymentStatus::class,'payment_status');
+    }
+
     protected static function boot()
     {
         parent::boot();

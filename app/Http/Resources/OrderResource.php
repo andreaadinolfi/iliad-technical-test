@@ -20,10 +20,10 @@ class OrderResource extends JsonResource
             'orderItems'=>OrderItemResource::collection($this->orderItems),
             "order_id" => $this->order_id,
             "phone" => $this->phone,
-            "shipping_status" => $this->shipping_status,
+            "shipping_status" =>($this->shippingStatus) ? $this->shippingStatus->status : null,
             "shipping_price" => $this->shipping_price,
             "shipping_payment_status" => ($this->shippingPaymentStatus) ? $this->shippingPaymentStatus->status : null,
-            "payment_status" => ($this->shippingStatus) ? $this->shippingStatus->status : null
+            "payment_status" => ($this->paymentStatus) ? $this->paymentStatus->status : null
 
         ];
 

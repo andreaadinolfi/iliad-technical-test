@@ -9,6 +9,7 @@ use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Throwable;
 
@@ -20,7 +21,7 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(){
-        $data = Order::with(['orderItems','shippingPaymentStatus','shippingStatus'])->latest()->get();
+        $data = Order::with(['orderItems','shippingPaymentStatus','shippingStatus','paymentStatus'])->latest()->get();
         return response()->json([OrderResource::collection($data), 'orders fetched.']);
     }
 
@@ -58,7 +59,7 @@ class OrderController extends Controller
     public function show($order_id)
     {
 
-        $order = Order::with(['orderItems.item','shippingPaymentStatus','shippingStatus'])
+        $order = Order::with(['orderItems.item','shippingPaymentStatus','shippingStatus','paymentStatus'])
             ->where('order_id',$order_id)->first();
 
         if (is_null($order)) {
@@ -74,9 +75,34 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $order_id)
     {
-        //
+        $order = Order::with(['orderItems.item','shippingPaymentStatus','shippingStatus','paymentStatus'])
+            ->where('order_id',$order_id)->first();
+
+        $validator = Validator::make($request->all(),[
+            'phone' => 'string|max:20',
+            'shipping_status' =>'integer', Rule::in(['1', '2']),
+            'shipping_payment_status' => Rule::in(['1', '2']),
+            'shipping_price' =>'numeric|gte:0',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors());
+        }
+
+//        if ($request->has('phone')){
+//            $order->phone = $request->phone;
+//        }
+        $order->phone = $request->phone;
+
+        $order->shipping_status = $request->shipping_status;
+        $order->shipping_price = $request->shipping_price;
+
+        $order->save();
+
+        $order->refresh();
+        return response()->json(['order updated successfully.', new OrderResource($order)]);
     }
 
     /**
@@ -104,13 +130,13 @@ class OrderController extends Controller
                 $count = ($count <= 0) ? 1 : $count;
                 $count = ($count > 20) ? 20 : $count;
 
-                $data = Order::with(['orderItems.item', 'shippingPaymentStatus', 'shippingStatus'])
+                $data = Order::with(['orderItems.item', 'shippingPaymentStatus', 'shippingStatus','paymentStatus'])
                     ->orderBy('created_at', 'ASC')
                     ->get()->take($count);
                 return OrderResource::collection($data);
             }
 
-            $data = Order::with(['orderItems.item', 'shippingPaymentStatus', 'shippingStatus'])
+            $data = Order::with(['orderItems.item', 'shippingPaymentStatus', 'shippingStatus','paymentStatus'])
                 ->orderBy('created_at', 'DESC')->get();
 
             if ($request->has('date_from')) {

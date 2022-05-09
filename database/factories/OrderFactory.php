@@ -19,12 +19,16 @@ class OrderFactory extends Factory
      */
     public function definition()
     {
+        $created = $this->faker->dateTimeBetween('-30 days');
         return [
             'phone' => $this->faker->e164PhoneNumber(),
             'order_id' => strtoupper(Str::random(12)),
             'shipping_price' => $this->faker->randomNumber(3),
             'shipping_status' => $this->faker->numberBetween(1,2),
             'shipping_payment_status' => $this->faker->numberBetween(1,2),
+            'payment_status' => $this->faker->numberBetween(1,2),
+            'created_at' => $created,
+            'updated_at' => $created
         ];
     }
 }
