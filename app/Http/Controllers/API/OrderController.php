@@ -5,8 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use DateInterval;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -85,5 +89,55 @@ class OrderController extends Controller
     {
         $order->delete();
         return response()->json('Order deleted successfully');
+    }
+
+    public function orders_search(Request $request){
+
+        try {
+            if(!$request->isMethod('POST')){
+                throw new MethodNotAllowedException('POST');
+            }
+
+            if ($request->has('count')) {
+
+                $count = (int)$request->post('count');
+                $count = ($count <= 0) ? 1 : $count;
+                $count = ($count > 20) ? 20 : $count;
+
+                $data = Order::with(['orderItems.item', 'shippingPaymentStatus', 'shippingStatus'])
+                    ->orderBy('created_at', 'ASC')
+                    ->get()->take($count);
+                return OrderResource::collection($data);
+            }
+
+            $data = Order::with(['orderItems.item', 'shippingPaymentStatus', 'shippingStatus'])
+                ->orderBy('created_at', 'DESC')->get();
+
+            if ($request->has('date_from')) {
+
+                $date_from = $request->post('date_from');
+                $date_from = DateTime::createFromFormat('Ymd', $date_from);
+                $data = $data->where('created_at', '>=', $date_from->format('Y-m-d'));
+
+            }
+
+            if ($request->has('date_to')) {
+
+                $date_to = $request->get('date_to');
+                $date_to = DateTime::createFromFormat('Ymd', $date_to);
+                $date_to = $date_to->add(new DateInterval('P1D'));
+
+                $data = $data->where('created_at', '<', $date_to->format('Y-m-d'));
+
+            }
+
+        }catch (MethodNotAllowedException $e){
+            return response()->json( ['message'=>$e->getMessage()], 400);
+
+        } catch (Throwable $e) {
+            return response()->json( ['message'=>$e->getMessage()], 500);
+        }
+
+        return response()->json([OrderResource::collection($data), sprintf('%d orders fetched.',$data->count())]);
     }
 }

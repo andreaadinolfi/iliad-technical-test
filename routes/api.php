@@ -29,6 +29,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::resource('orders', App\Http\Controllers\API\OrderController::class);
 
+    Route::post('orders_search', [App\Http\Controllers\API\OrderController::class,'orders_search']);
+
     Route::post('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
 });
 
