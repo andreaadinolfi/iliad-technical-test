@@ -92,9 +92,17 @@ class OrderController extends Controller
             return response()->json($validator->errors());
         }
 
-        $order->phone = $request->phone;
-        $order->shipping_status = $request->shipping_status;
-        $order->shipping_price = $request->shipping_price;
+        if( $request->phone){
+            $order->phone = $request->phone;
+        }
+
+        if( $request->shipping_status){
+            $order->shipping_status = $request->shipping_status;
+        }
+
+        if( $request->shipping_price){
+            $order->shipping_price = $request->shipping_price;
+        }
 
         $order->save();
 
