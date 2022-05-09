@@ -21,8 +21,9 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(){
-        $data = Order::with(['orderItems','shippingPaymentStatus','shippingStatus','paymentStatus'])->latest()->get();
-        return response()->json([OrderResource::collection($data), 'orders fetched.']);
+
+        return OrderResource::collection(Order::with(['orderItems','shippingPaymentStatus','shippingStatus','paymentStatus'])->latest()->get());
+
     }
 
     /**
@@ -91,11 +92,7 @@ class OrderController extends Controller
             return response()->json($validator->errors());
         }
 
-//        if ($request->has('phone')){
-//            $order->phone = $request->phone;
-//        }
         $order->phone = $request->phone;
-
         $order->shipping_status = $request->shipping_status;
         $order->shipping_price = $request->shipping_price;
 
@@ -111,8 +108,9 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order)
+    public function destroy($order_id)
     {
+        $order = Order::where('order_id',$order_id)->first();
         $order->delete();
         return response()->json('Order deleted successfully');
     }

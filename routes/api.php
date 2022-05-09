@@ -35,4 +35,3 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 
-//Route::resource('orders', App\Http\Controllers\API\OrderController::class);

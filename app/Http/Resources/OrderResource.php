@@ -23,8 +23,8 @@ class OrderResource extends JsonResource
             "shipping_status" =>($this->shippingStatus) ? $this->shippingStatus->status : null,
             "shipping_price" => $this->shipping_price,
             "shipping_payment_status" => ($this->shippingPaymentStatus) ? $this->shippingPaymentStatus->status : null,
-            "payment_status" => ($this->paymentStatus) ? $this->paymentStatus->status : null
-
+            "payment_status" => ($this->paymentStatus) ? $this->paymentStatus->status : null,
+            'date' => $this->created_at->format('Y-m-d H:i:s')
         ];
 
     }
